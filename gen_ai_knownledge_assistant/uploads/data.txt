@@ -1,0 +1,85 @@
+GenAI Foundation Training Knowledge Base
+
+Introduction to Generative AI
+Generative AI is a branch of artificial intelligence that creates new content such as text, images, audio, video, and code. Unlike traditional AI systems that mainly classify or predict, generative models produce original outputs based on patterns learned from large datasets.
+
+What is an LLM
+A Large Language Model, or LLM, is a type of generative AI model trained on massive text datasets to understand and generate human-like language. LLMs can answer questions, summarize information, generate code, translate text, and assist with many language-based tasks.
+
+How LLMs Work
+LLMs are built using transformer architecture. They process input text as tokens and learn relationships between words using attention mechanisms. During inference, the model predicts the most likely next token repeatedly until it forms a complete response.
+
+What are Tokens
+Tokens are smaller units of text that a model processes. A token may be a word, part of a word, punctuation, or symbol. LLM pricing and limits are usually based on the number of input and output tokens.
+
+Transformer Architecture
+Transformers are deep learning models designed for sequence processing. The key innovation in transformers is self-attention, which helps the model understand the importance of each word in relation to other words in the same input. This allows the model to capture context more effectively than older architectures such as RNNs.
+
+What is Self-Attention
+Self-attention is a mechanism that helps the model focus on relevant parts of the input while processing each token. For example, in a sentence, self-attention helps the model determine which earlier words are important for understanding the current word.
+
+Embeddings
+Embeddings are dense numerical vector representations of text, words, or documents. They convert language into numbers in such a way that similar meanings are placed closer together in vector space. Embeddings are widely used in semantic search, clustering, recommendation systems, and RAG applications.
+
+Sentence Embeddings
+Sentence embeddings represent the meaning of an entire sentence as a vector. If two sentences have similar meanings, their embeddings are close to each other according to similarity measures such as cosine similarity.
+
+Cosine Similarity
+Cosine similarity is a metric used to measure how similar two vectors are. In AI applications, it is often used to compare embeddings and find text that is semantically similar, even if the exact words are different.
+
+Prompt Engineering
+Prompt engineering is the practice of designing inputs that guide an LLM to produce the desired output. A good prompt is usually clear, specific, and contains enough context. Prompt engineering may include instructions, examples, constraints, or role descriptions.
+
+System Prompt
+A system prompt defines the behavior or role of the assistant. For example, a system prompt may tell the model to behave like a tutor, a coding assistant, or a concise support bot.
+
+Temperature Parameter
+Temperature controls the randomness of the model’s output. A low temperature produces more focused and deterministic responses, while a high temperature produces more creative and varied responses.
+
+Top-k and Top-p
+Top-k and top-p are sampling strategies that affect token selection during generation. They help control output diversity and response style.
+
+Hallucination
+Hallucination occurs when an LLM generates information that sounds plausible but is false or unsupported. This is a major challenge in generative AI systems and is one reason why grounding with external knowledge is important.
+
+What is RAG
+Retrieval-Augmented Generation, or RAG, is an architecture that combines information retrieval with text generation. Instead of relying only on what the LLM learned during training, a RAG system first retrieves relevant documents or passages and then uses them as context for generating the final response.
+
+Why RAG is Useful
+RAG improves answer accuracy, reduces hallucinations, and allows the system to use up-to-date or domain-specific information without retraining the model.
+
+Vector Database
+A vector database stores embeddings and supports similarity search across them. It makes it possible to quickly find documents or text chunks that are most relevant to a user query.
+
+ChromaDB
+ChromaDB is a vector database commonly used in GenAI applications for storing and retrieving embeddings. It can persist data locally, making it suitable for learning projects and lightweight production use cases.
+
+How ChromaDB is Used in RAG
+In a RAG pipeline, training content is split into chunks and converted into embeddings using an embedding model. These vectors are stored in ChromaDB. When a user asks a question, the question is also converted into an embedding, and ChromaDB retrieves the most relevant chunks using similarity search.
+
+Chunking
+Chunking is the process of splitting large documents into smaller parts before embedding them. Good chunking improves retrieval quality because it ensures the retrieved context is focused and relevant.
+
+Semantic Search
+Semantic search finds results based on meaning rather than exact keyword match. Embeddings and vector databases enable semantic search in GenAI systems.
+
+Fine-Tuning vs Prompting
+Fine-tuning changes the model by training it further on specific datasets, while prompting guides the model at runtime without changing its weights. RAG is another alternative that adds external knowledge without retraining.
+
+Common GenAI Use Cases
+Generative AI is used in chatbots, document question answering, summarization, code generation, content creation, translation, customer support, and enterprise knowledge assistants.
+
+Responsible AI
+Responsible AI involves fairness, transparency, privacy, security, and safe usage of AI systems. When building GenAI applications, it is important to avoid exposing confidential information and to validate generated outputs.
+
+Example Question and Answer
+Question: What is the role of embeddings in a RAG system
+Answer: Embeddings convert documents and user queries into vectors so that a vector database can retrieve the most semantically relevant content for the LLM.
+
+Example Question and Answer
+Question: Why is ChromaDB useful in a GenAI project
+Answer: ChromaDB stores vector embeddings and allows fast similarity search, which helps a RAG system retrieve relevant context before generating answers.
+
+Example Question and Answer
+Question: What is the difference between an LLM and RAG
+Answer: An LLM generates responses from its learned knowledge, while RAG enhances that process by retrieving external context from a knowledge base before generation.

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI Training Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f5efe4;
+            --bg-accent: #eadfcb;
+            --card: rgba(255, 252, 246, 0.86);
+            --card-strong: #fffaf2;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --primary: #0f766e;
+            --primary-dark: #115e59;
+            --secondary: #c2410c;
+            --border: rgba(31, 41, 55, 0.12);
+            --shadow: 0 20px 45px rgba(31, 41, 55, 0.10);
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "IBM Plex Sans", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(15, 118, 110, 0.14), transparent 32%),
+                radial-gradient(circle at bottom right, rgba(194, 65, 12, 0.12), transparent 30%),
+                linear-gradient(135deg, var(--bg), var(--bg-accent));
+            min-height: 100vh;
+        }
+
+        .shell {
+            width: min(1120px, calc(100% - 32px));
+            margin: 32px auto;
+        }
+
+        .hero {
+            padding: 36px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            background: linear-gradient(135deg, rgba(255,255,255,0.72), rgba(255,250,242,0.88));
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: auto -40px -40px auto;
+            width: 180px;
+            height: 180px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(15, 118, 110, 0.25), transparent 65%);
+        }
+
+        .eyebrow {
+            display: inline-block;
+            font-size: 12px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--primary-dark);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .hero h1 {
+            margin: 0 0 12px;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: clamp(32px, 5vw, 54px);
+            line-height: 1.02;
+            letter-spacing: -0.04em;
+        }
+
+        .hero p {
+            margin: 0;
+            max-width: 760px;
+            font-size: 17px;
+            line-height: 1.7;
+            color: var(--muted);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 22px;
+            margin-top: 22px;
+        }
+
+        .panel {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            background: var(--card);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            padding: 24px;
+        }
+
+        .panel h2 {
+            margin: 0 0 8px;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 24px;
+            letter-spacing: -0.03em;
+        }
+
+        .panel p {
+            margin: 0 0 18px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 180px;
+            resize: vertical;
+            border: 1px solid rgba(31, 41, 55, 0.14);
+            border-radius: 18px;
+            padding: 18px 18px;
+            font: inherit;
+            font-size: 16px;
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.82);
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        textarea:focus {
+            border-color: rgba(15, 118, 110, 0.45);
+            box-shadow: 0 0 0 5px rgba(15, 118, 110, 0.10);
+            transform: translateY(-1px);
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: 0;
+            border-radius: 999px;
+            padding: 14px 22px;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 12px 24px rgba(15, 118, 110, 0.24);
+        }
+
+        .secondary-btn {
+            background: rgba(255, 255, 255, 0.85);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            margin-top: 14px;
+            min-height: 24px;
+            color: var(--secondary);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .result-stack {
+            display: grid;
+            gap: 16px;
+        }
+
+        .result-card {
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            background: var(--card-strong);
+            border: 1px solid rgba(31, 41, 55, 0.08);
+        }
+
+        .result-card h3 {
+            margin: 0 0 10px;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 18px;
+        }
+
+        .answer {
+            font-size: 16px;
+            line-height: 1.75;
+            white-space: pre-wrap;
+        }
+
+        .meta-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .match {
+            padding: 14px;
+            border-radius: 16px;
+            background: rgba(245, 239, 228, 0.75);
+            border: 1px solid rgba(31, 41, 55, 0.08);
+        }
+
+        .match-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 700;
+            background: rgba(15, 118, 110, 0.12);
+            color: var(--primary-dark);
+        }
+
+        .distance {
+            font-size: 13px;
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        .chunk-text {
+            margin: 0;
+            color: var(--text);
+            line-height: 1.65;
+            white-space: pre-wrap;
+        }
+
+        .context-box {
+            max-height: 260px;
+            overflow: auto;
+            padding-right: 6px;
+            white-space: pre-wrap;
+            line-height: 1.65;
+            color: var(--text);
+        }
+
+        .placeholder {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding: 26px;
+            }
+
+            .panel {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <section class="hero">
+            <h1>GenAI Training Assistant</h1>
+            <p>
+                Ask beginner-friendly questions about GenAI, LLMs, embeddings, prompt engineering,
+                transformers, RAG, and vector databases.
+            </p>
+        </section>
+
+        <section class="grid">
+            <div class="panel">
+                <h2>Ask a Question</h2>
+                <p>Try questions like “What is RAG?”, “How do embeddings work?” or “Why is ChromaDB used in this project?”</p>
+
+                <textarea id="question" placeholder="Type your GenAI training question here..."></textarea>
+
+                <div class="actions">
+                    <button class="primary-btn" id="askBtn" onclick="askQuestion()">Ask Assistant</button>
+                    <button class="secondary-btn" onclick="fillSample()">Use Sample Question</button>
+                    <button class="secondary-btn" onclick="clearAll()">Clear</button>
+                </div>
+
+                <div class="status" id="status"></div>
+            </div>
+
+            <div class="panel">
+                <h2>Assistant Output</h2>
+                <p>The generated answer, retrieved chunks, and distance scores will appear here.</p>
+
+                <div class="result-stack" id="results">
+                    <div class="result-card">
+                        <div class="placeholder">
+                            No question submitted yet. Ask something to see the RAG pipeline output.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function fillSample() {
+            document.getElementById("question").value = "Explain RAG in a simple way and why ChromaDB is used in it.";
+        }
+
+        function clearAll() {
+            document.getElementById("question").value = "";
+            document.getElementById("status").textContent = "";
+            document.getElementById("results").innerHTML = `
+                <div class="result-card">
+                    <div class="placeholder">
+                        No question submitted yet. Ask something to see the RAG pipeline output.
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMatches(matches) {
+            if (!matches || !matches.length) {
+                return `
+                    <div class="result-card">
+                        <h3>Top Matches</h3>
+                        <div class="placeholder">No retrieved chunks found.</div>
+                    </div>
+                `;
+            }
+
+            const items = matches.map((match, index) => `
+                <div class="match">
+                    <div class="match-head">
+                        <span class="badge">Match ${index + 1} | ${match.source} | Chunk ${match.chunk_index}</span>
+                        <span class="distance">Distance: ${Number(match.distance).toFixed(4)}</span>
+                    </div>
+                    <p class="chunk-text">${escapeHtml(match.content)}</p>
+                </div>
+            `).join("");
+
+            return `
+                <div class="result-card">
+                    <h3>Top Retrieved Chunks</h3>
+                    <div class="meta-grid">${items}</div>
+                </div>
+            `;
+        }
+
+        function renderContext(context) {
+            return `
+                <div class="result-card">
+                    <h3>Retrieved Context</h3>
+                    <div class="context-box">${escapeHtml(context || "No context returned.")}</div>
+                </div>
+            `;
+        }
+
+        function renderAnswer(answer) {
+            return `
+                <div class="result-card">
+                    <h3>Beginner-Friendly Answer</h3>
+                    <div class="answer">${escapeHtml(answer || "No answer returned.")}</div>
+                </div>
+            `;
+        }
+
+        function escapeHtml(text) {
+            return String(text)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        async function askQuestion() {
+            const question = document.getElementById("question").value.trim();
+            const resultBox = document.getElementById("results");
+            const statusBox = document.getElementById("status");
+            const askBtn = document.getElementById("askBtn");
+
+            if (!question) {
+                statusBox.textContent = "Please enter a question first.";
+                return;
+            }
+
+            askBtn.disabled = true;
+            statusBox.textContent = "Retrieving relevant context and generating answer...";
+            resultBox.innerHTML = `
+                <div class="result-card">
+                    <div class="placeholder">Working on your request...</div>
+                </div>
+            `;
+
+            try {
+                const response = await fetch("/ask", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ question })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || data.error) {
+                    throw new Error(data.error || "Something went wrong.");
+                }
+
+                resultBox.innerHTML = `
+                    ${renderAnswer(data.answer)}
+                    ${renderMatches(data.matches)}
+                    ${renderContext(data.retrieved_context)}
+                `;
+
+                statusBox.textContent = "Answer generated successfully.";
+            } catch (error) {
+                resultBox.innerHTML = `
+                    <div class="result-card">
+                        <h3>Error</h3>
+                        <div class="answer">${escapeHtml(error.message)}</div>
+                    </div>
+                `;
+                statusBox.textContent = "Request failed.";
+            } finally {
+                askBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
