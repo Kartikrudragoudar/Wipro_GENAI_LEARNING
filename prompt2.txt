@@ -1,0 +1,426 @@
+Create a full-stack project named medilens using a LOOP-Engineering architecture.
+
+Product name:
+MediLens - AI Medical Report Summarizer
+
+Product concept:
+Build a healthcare-focused AI document assistant that helps users upload medical lab reports, extract key lab values, compare them with reference ranges, explain the results in simple language, and generate questions to ask a doctor.
+
+This product must be designed as a safe healthcare decision-support tool, not a diagnosis tool.
+
+Important safety positioning:
+MediLens does not diagnose disease, prescribe treatment, replace doctors, or provide emergency medical advice.
+It helps users understand report terminology, organize lab values, and prepare better questions for qualified healthcare professionals.
+
+Core LOOP-Engineering workflow:
+Design the whole product around this loop:
+
+Upload → Extract → Structure → Compare → Explain → Question → Export → Review
+
+Each loop stage must be visible in the UI and represented in the backend architecture.
+
+Loop stages:
+
+1. Upload Loop
+- User uploads a PDF or image medical report.
+- System validates file type and file size.
+- System creates a report session.
+- UI shows upload status and file metadata.
+
+2. Extraction Loop
+- Backend extracts text from the uploaded report.
+- For PDFs, use pdfplumber or a similar Python PDF text extraction library.
+- For images, use OCR such as Tesseract or a mock OCR service for MVP.
+- UI shows extracted text in a review panel.
+- If extraction quality is low, user can manually edit extracted text.
+
+3. Structuring Loop
+- Backend detects common lab values from extracted text.
+- Detect fields such as:
+  - Hemoglobin
+  - WBC
+  - RBC
+  - Platelets
+  - Glucose
+  - HbA1c
+  - Cholesterol
+  - HDL
+  - LDL
+  - Triglycerides
+  - Creatinine
+  - Urea
+  - Vitamin D
+  - TSH
+  - ALT
+  - AST
+- Store each detected value with:
+  - test_name
+  - value
+  - unit
+  - reference_range
+  - source_text
+  - confidence_score
+
+4. Comparison Loop
+- Backend compares extracted values with reference ranges.
+- Mark each value as:
+  - normal
+  - low
+  - high
+  - needs_review
+  - unknown_range
+- UI highlights values clearly but calmly.
+- Avoid alarming language.
+- Use neutral labels like “Outside reference range” instead of “danger.”
+
+5. Explanation Loop
+- Backend generates patient-friendly explanations.
+- Use a provider-based AI architecture.
+- Start with a MockAIProvider so the app works without API keys.
+- The explanation must be simple, cautious, and non-diagnostic.
+- Each explanation should include:
+  - what the test commonly measures
+  - whether the value is within reference range
+  - why a doctor may review it
+  - what context may affect interpretation
+
+6. Doctor Questions Loop
+- Backend generates suggested questions users can ask a doctor.
+- Questions must be practical and safe.
+- Example:
+  - “Can you explain what this result means in my overall health context?”
+  - “Should this test be repeated?”
+  - “Are there lifestyle or medication factors that may affect this value?”
+
+7. Export Loop
+- User can export a clean summary as PDF.
+- Export should include:
+  - uploaded report name
+  - extracted values table
+  - highlighted out-of-range values
+  - simple-language summary
+  - doctor questions
+  - safety disclaimer
+
+8. Review Loop
+- User can view report history for the current browser/session.
+- User can reopen a previous report analysis.
+- For MVP, store report history locally.
+- Structure the app so database storage can be added later.
+
+Frontend tech stack:
+- Next.js with TypeScript
+- Tailwind CSS
+- Recharts for trends/charts
+- PDF/image upload UI
+- Clean healthcare dashboard interface
+
+Backend tech stack:
+- FastAPI with Python
+- Pydantic models
+- pdfplumber for PDF text extraction
+- OCR service abstraction for image extraction
+- Mock OCR provider for MVP if real OCR setup is difficult
+- Provider-based AI architecture
+- MockAIProvider first
+- Future support for Gemini, OpenAI, or Claude
+- CORS enabled
+- Environment variables using .env
+- FastAPI Swagger documentation
+
+Project structure:
+- frontend/
+  - app/
+  - components/
+  - components/layout/
+  - components/upload/
+  - components/report/
+  - components/history/
+  - components/export/
+  - components/charts/
+  - lib/
+  - lib/api/
+  - lib/types/
+  - lib/samples/
+- backend/
+  - app/
+  - app/main.py
+  - app/models.py
+  - app/loop_engine.py
+  - app/routes/
+  - app/routes/reports.py
+  - app/routes/analyze.py
+  - app/routes/export.py
+  - app/services/
+  - app/services/file_validation_service.py
+  - app/services/ocr_service.py
+  - app/services/pdf_text_service.py
+  - app/services/lab_extraction_service.py
+  - app/services/range_checker.py
+  - app/services/pdf_export_service.py
+  - app/providers/
+  - app/providers/ai_provider.py
+  - app/providers/mock_ai_provider.py
+  - app/providers/ocr_provider.py
+  - app/providers/mock_ocr_provider.py
+  - requirements.txt
+  - .env.example
+- README.md
+
+UI requirements:
+Do not create a marketing landing page.
+The first screen must be the actual product workflow.
+
+Design the UI as a clean healthcare productivity dashboard:
+- top navigation with product name and report status
+- left sidebar with report history and sample reports
+- main upload/analyze workspace
+- extracted lab values table
+- summary panel
+- doctor questions panel
+- extracted text review panel
+- export summary button
+- loop progress indicator showing:
+  Upload → Extract → Structure → Compare → Explain → Question → Export
+- calm colors, accessible contrast, and readable typography
+- avoid scary medical visuals
+- avoid exaggerated red alerts
+- use professional labels and neutral health language
+
+Core MVP features:
+1. User can upload a PDF or image report.
+2. User can also load a sample report for demo.
+3. Backend validates the file.
+4. Backend extracts text from the report.
+5. User can review/edit extracted text.
+6. Backend detects common lab values.
+7. Backend compares values with reference ranges.
+8. UI shows table of extracted values.
+9. UI highlights normal, low, high, needs_review, and unknown_range.
+10. Backend generates simple-language summary.
+11. Backend generates doctor questions.
+12. User can export the summary as PDF.
+13. User can see report history in local state.
+14. App includes a clear safety disclaimer.
+
+Backend API requirements:
+Create these endpoints:
+- GET /health
+- GET /api/samples
+- POST /api/reports/upload
+- POST /api/reports/analyze-text
+- POST /api/reports/explain
+- POST /api/reports/export
+- GET /api/reports/{report_id}
+
+Use these models:
+
+ReportSession:
+- report_id
+- file_name
+- uploaded_at
+- status
+- loop_stage
+- extracted_text
+- extracted_values
+- summary
+- doctor_questions
+- safety_disclaimer
+
+UploadReportResponse:
+- report_id
+- file_name
+- file_type
+- file_size
+- extracted_text
+- extraction_confidence
+- loop_trace
+
+AnalyzeTextRequest:
+- report_id
+- extracted_text
+
+LabValue:
+- test_name
+- value
+- unit
+- reference_range
+- status
+- source_text
+- confidence_score
+
+AnalyzeTextResponse:
+- report_id
+- extracted_values
+- abnormal_count
+- needs_review_count
+- loop_trace
+
+ExplainReportRequest:
+- report_id
+- extracted_values
+- patient_context optional
+
+ExplainReportResponse:
+- report_id
+- summary
+- explanations
+- doctor_questions
+- safety_disclaimer
+- loop_trace
+
+LoopTrace:
+- upload_received
+- file_validated
+- text_extracted
+- values_structured
+- ranges_compared
+- explanations_generated
+- questions_generated
+- export_generated
+- final_status
+
+Loop engine requirements:
+Create backend module app/loop_engine.py.
+
+It should coordinate the workflow:
+- validate_upload_loop()
+- run_extraction_loop()
+- run_structuring_loop()
+- run_comparison_loop()
+- run_explanation_loop()
+- run_doctor_questions_loop()
+- run_export_loop()
+- build_loop_trace()
+
+The loop engine should not directly depend on one specific AI model or OCR implementation.
+Use provider interfaces.
+
+Provider requirements:
+Create AIProvider interface with:
+- explain_report(extracted_values, patient_context)
+- generate_doctor_questions(extracted_values, summary)
+- simplify_medical_terms(text)
+
+Create OCRProvider interface with:
+- extract_text_from_image(file)
+
+Create MockAIProvider first.
+Create MockOCRProvider first if real OCR is not configured.
+
+Lab extraction requirements:
+Implement a deterministic lab extraction service first using regex/pattern matching.
+It should detect test names, values, and units from sample report text.
+Do not rely only on AI for extraction.
+AI should be used for explanation, not as the only source of structured values.
+
+Reference range requirements:
+Create a reference range map for common tests.
+Include ranges for:
+- Hemoglobin
+- WBC
+- RBC
+- Platelets
+- Fasting glucose
+- HbA1c
+- Total cholesterol
+- HDL
+- LDL
+- Triglycerides
+- Creatinine
+- Urea
+- Vitamin D
+- TSH
+- ALT
+- AST
+
+If gender/age-specific ranges are complex, mark result as needs_review or unknown_range instead of pretending certainty.
+
+Safety and compliance requirements:
+- Add visible disclaimer in the UI.
+- Avoid diagnosis language.
+- Avoid treatment recommendations.
+- Avoid urgent medical claims unless the user provides explicitly critical context.
+- Never say “you have disease X.”
+- Say “this value is outside the listed reference range and should be reviewed with a qualified clinician.”
+- Do not store sensitive data in a real database for MVP unless privacy handling is explained.
+- Keep report history local for MVP.
+- Add README section explaining privacy limitations.
+
+Frontend state requirements:
+Model the product as a loop, not a single form.
+
+Use state for:
+- current report session
+- uploaded file metadata
+- extracted text
+- edited extracted text
+- extracted lab values
+- current loop stage
+- summary
+- explanations
+- doctor questions
+- report history
+- loading states
+- error states
+
+Components to create:
+- AppShell
+- TopNav
+- SidebarHistory
+- UploadPanel
+- SampleReportPicker
+- LoopProgress
+- ExtractedTextReview
+- LabValuesTable
+- ResultStatusBadge
+- SummaryPanel
+- DoctorQuestionsPanel
+- ExportPanel
+- ReportHistory
+- SafetyDisclaimer
+- TrendChart optional for future-ready UI
+
+Engineering requirements:
+- Use clean reusable components.
+- Use TypeScript types matching backend models.
+- Keep API calls in a dedicated frontend API client.
+- Add loading states, empty states, error states, and retry states.
+- Add realistic sample reports for demos.
+- Keep the UI responsive for laptop and desktop.
+- Avoid unnecessary features.
+- Keep the MVP focused on the report understanding loop.
+- Add README with setup, architecture, loop design, API docs, safety disclaimer, privacy notes, and roadmap.
+
+README must explain:
+- What LOOP Engineering means in this project.
+- The medical report analysis loop.
+- Frontend/backend setup.
+- API endpoints.
+- Mock AI provider.
+- Mock OCR provider.
+- Deterministic lab extraction.
+- Future real AI provider support.
+- Future real OCR support.
+- Future encrypted database storage.
+- Why this project is useful for healthcare productivity.
+- Safety and privacy limitations.
+
+Deliverables:
+- Working Next.js frontend
+- Working FastAPI backend
+- Healthcare dashboard UI
+- Upload/report analysis workflow
+- Sample report demo
+- PDF/text extraction flow
+- Lab values extraction
+- Reference range comparison
+- Simple-language summary
+- Doctor questions
+- PDF export
+- Loop progress UI
+- Mock AI provider
+- Clean README
+
+Build the MVP first.
+Focus on making the LOOP workflow clear, safe, visible, and impressive for product-based company interviews.

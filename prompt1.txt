@@ -1,0 +1,300 @@
+Create a full-stack project named self-correction-code-assistant using a Loop Engineering architecture.
+
+Product concept:
+Build a VS Code-inspired AI developer tool that helps developers fix broken code through an iterative correction loop.
+
+This is not a generic chatbot. It is a loop-based developer assistant where every fix goes through a clear cycle:
+1. User provides broken code.
+2. System analyzes the code and issue.
+3. Assistant generates a fix.
+4. User provides test output, error output, or feedback.
+5. Assistant self-corrects the previous fix.
+6. UI compares attempts.
+7. The system records what changed and why.
+
+Core Loop Engineering Model:
+Use this loop as the main product workflow:
+
+Input Loop:
+- User enters code, language, error message, and optional context.
+- System validates the input.
+- System creates an analysis session.
+
+Analysis Loop:
+- Backend analyzes the code.
+- AI provider identifies bug summary, root cause, risks, and likely fix strategy.
+- UI shows the reasoning in a structured assistant panel.
+
+Correction Loop:
+- Backend generates fixed code.
+- UI shows original code, fixed code, explanation, confidence score, and suggested tests.
+- User can compare original vs fixed code in a diff view.
+
+Validation Loop:
+- User pastes test output, runtime error, compiler error, or feedback.
+- Backend treats this as validation feedback.
+- System decides whether the previous fix succeeded, failed, or needs improvement.
+
+Self-Correction Loop:
+- Backend uses original code, previous fixed code, feedback, and attempt history.
+- AI provider creates an improved fix.
+- UI adds a new correction attempt.
+- Each attempt must show:
+  - attempt number
+  - timestamp
+  - status
+  - bug summary
+  - root cause
+  - fixed code
+  - explanation
+  - confidence score
+  - what changed from previous attempt
+
+Learning Loop:
+- The app stores correction history in local state for MVP.
+- Each session should preserve the sequence of attempts.
+- Future architecture should allow saving sessions to a database.
+
+Frontend tech stack:
+- Next.js with TypeScript
+- Tailwind CSS
+- Monaco Editor
+- Diff viewer
+- VS Code-inspired layout
+
+Backend tech stack:
+- FastAPI with Python
+- Pydantic models
+- Provider-based AI architecture
+- Mock AI provider first
+- Future support for Gemini, OpenAI, or Claude
+- CORS enabled
+- Environment variables using .env
+- FastAPI Swagger documentation
+
+Project structure:
+- frontend/
+  - app/
+  - components/
+  - components/layout/
+  - components/editor/
+  - components/assistant/
+  - components/bottom-panel/
+  - components/history/
+  - lib/
+  - lib/api/
+  - lib/types/
+  - lib/samples/
+- backend/
+  - app/
+  - app/main.py
+  - app/models.py
+  - app/loop_engine.py
+  - app/ai_provider.py
+  - app/mock_provider.py
+  - app/routes/analyze.py
+  - app/routes/self_correct.py
+  - app/routes/sessions.py
+  - requirements.txt
+  - .env.example
+- README.md
+
+UI requirements:
+Design the interface like a VS Code-style engineering workspace:
+- left activity bar with icons
+- session/file explorer sidebar
+- top tab bar
+- main Monaco editor for original code
+- diff view for original vs fixed code
+- right assistant panel for analysis and correction details
+- bottom panel with tabs:
+  - Problems
+  - Tests
+  - Output
+  - Logs
+  - Loop Trace
+- bottom status bar
+- dark developer-tool theme
+- no marketing landing page
+- first screen must be the actual tool
+
+Main user workflow:
+1. User opens the app.
+2. User selects a sample bug or pastes code.
+3. User selects language: Python, JavaScript, TypeScript, Java, or C++.
+4. User enters error message or issue description.
+5. User clicks Analyze.
+6. Backend starts the Analysis Loop.
+7. Assistant returns structured analysis and first fix.
+8. User reviews fixed code and diff.
+9. User pastes test output or feedback.
+10. User clicks Self-correct.
+11. Backend starts the Self-Correction Loop.
+12. UI adds the new attempt to correction history.
+13. User can switch between attempts and compare changes.
+
+Backend API requirements:
+Create these endpoints:
+- GET /health
+- POST /api/analyze
+- POST /api/self-correct
+- GET /api/samples
+- POST /api/loop/trace
+
+Use these models:
+
+AnalyzeRequest:
+- code
+- language
+- error_message
+- user_context
+
+AnalyzeResponse:
+- session_id
+- bug_summary
+- root_cause
+- fixed_code
+- explanation
+- confidence_score
+- suggested_tests
+- risks
+- attempts
+- loop_trace
+
+SelfCorrectRequest:
+- session_id
+- original_code
+- previous_fixed_code
+- language
+- test_output
+- user_feedback
+- attempt_number
+- previous_attempts
+
+CorrectionAttempt:
+- attempt_number
+- timestamp
+- status
+- bug_summary
+- root_cause
+- fixed_code
+- explanation
+- confidence_score
+- change_summary
+
+LoopTrace:
+- input_received
+- analysis_completed
+- correction_generated
+- validation_feedback_received
+- self_correction_completed
+- final_status
+
+Loop engine requirements:
+Create a backend module named loop_engine.py.
+
+It should coordinate the loop:
+- validate_input()
+- run_analysis_loop()
+- run_correction_loop()
+- run_validation_loop()
+- run_self_correction_loop()
+- build_loop_trace()
+
+The loop engine should not directly depend on a specific AI model.
+It should use an AIProvider interface.
+
+AI provider requirements:
+Create an AIProvider interface with:
+- analyze_code(request)
+- generate_fix(analysis)
+- self_correct(request)
+- summarize_attempt_change(previous_code, new_code)
+
+Create MockAIProvider first.
+
+MockAIProvider should return realistic results for:
+- Python typo errors
+- JavaScript undefined variables
+- TypeScript type mismatch
+- missing imports
+- simple logic bugs
+
+Important MVP rule:
+Do not execute user-submitted code in the first version.
+Validation feedback should come from user-pasted test output or error logs.
+Design the backend so a sandboxed code runner can be added later.
+
+Frontend state requirements:
+The frontend should model the correction process as a loop, not as a single response.
+
+Use state for:
+- current session
+- original code
+- selected language
+- error message
+- current attempt
+- all attempts
+- loop status
+- validation feedback
+- assistant response
+- loading/error state
+
+Show loop status in the UI:
+- Waiting for input
+- Analyzing
+- Fix generated
+- Awaiting validation feedback
+- Self-correcting
+- Correction complete
+- Needs another loop
+
+Components to create:
+- AppShell
+- ActivityBar
+- ExplorerSidebar
+- EditorTabs
+- CodeEditor
+- DiffViewer
+- AssistantPanel
+- CorrectionHistory
+- FeedbackPanel
+- BottomPanel
+- LoopTracePanel
+- StatusBar
+- SampleBugPicker
+
+Engineering requirements:
+- Use clean reusable components.
+- Use TypeScript types matching backend models.
+- Keep API calls in a dedicated frontend API client.
+- Add loading states, empty states, error states, and retry states.
+- Keep the UI responsive for laptop and desktop screens.
+- Avoid unnecessary features.
+- Keep the product focused on the correction loop.
+- Add README with setup, architecture, loop design, API docs, and roadmap.
+
+README must explain:
+- What Loop Engineering means in this project.
+- The correction loop architecture.
+- Frontend/backend setup.
+- API endpoints.
+- Mock AI provider.
+- Future real AI provider support.
+- Future sandboxed test runner.
+- Why this project is useful for developer productivity.
+
+Deliverables:
+- Working Next.js frontend
+- Working FastAPI backend
+- VS Code-inspired UI
+- Monaco editor
+- Diff viewer
+- Loop-based correction workflow
+- Mock AI provider
+- Correction history
+- Loop trace panel
+- Clean README
+
+Build the MVP first.
+Focus on making the correction loop clear, visible, and impressive for product-based company interviews.

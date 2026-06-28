@@ -1,0 +1,457 @@
+Create a full-stack project named ecopulse using a LOOP-Engineering architecture.
+
+Product name:
+EcoPulse - Smart Energy Usage Optimizer
+
+Product concept:
+Build a ClimateTech energy analytics dashboard that helps households and small businesses upload electricity usage data, detect peak consumption patterns, estimate cost and carbon emissions, generate practical energy-saving recommendations, track actions, and improve usage over time.
+
+This should not be just a static dashboard. It must be designed as a repeated improvement loop.
+
+Core LOOP workflow:
+Upload → Clean → Analyze → Estimate → Recommend → Act → Track → Improve
+
+Each loop stage must be visible in the UI and represented in the backend architecture.
+
+Main user journey:
+1. User uploads an electricity usage CSV or loads a sample dataset.
+2. System validates and cleans the data.
+3. System analyzes energy usage patterns.
+4. System estimates electricity cost and carbon emissions.
+5. System generates personalized savings recommendations.
+6. User selects actions to follow.
+7. System tracks goal progress and completed actions.
+8. System generates a next-cycle improvement plan.
+
+Frontend tech stack:
+- Next.js with TypeScript
+- Tailwind CSS
+- Recharts for charts
+- Clean ClimateTech dashboard UI
+- Responsive laptop and desktop layout
+
+Backend tech stack:
+- FastAPI with Python
+- Pandas for CSV processing and energy analytics
+- Pydantic models for validation
+- Provider-based AI architecture
+- Mock AI provider first
+- Future support for Gemini, OpenAI, or Claude
+- CORS enabled
+- Environment variables using .env
+- FastAPI Swagger documentation
+
+Project structure:
+- frontend/
+  - app/
+  - components/
+  - components/layout/
+  - components/upload/
+  - components/dashboard/
+  - components/recommendations/
+  - components/actions/
+  - components/history/
+  - components/export/
+  - components/charts/
+  - lib/
+  - lib/api/
+  - lib/types/
+  - lib/samples/
+- backend/
+  - app/
+  - app/main.py
+  - app/models.py
+  - app/loop_engine.py
+  - app/routes/
+  - app/routes/energy.py
+  - app/routes/recommendations.py
+  - app/routes/actions.py
+  - app/routes/export.py
+  - app/services/
+  - app/services/file_validation_service.py
+  - app/services/csv_cleaning_service.py
+  - app/services/usage_analysis_service.py
+  - app/services/cost_estimation_service.py
+  - app/services/carbon_estimation_service.py
+  - app/services/recommendation_engine.py
+  - app/services/report_export_service.py
+  - app/providers/
+  - app/providers/ai_provider.py
+  - app/providers/mock_ai_provider.py
+  - requirements.txt
+  - .env.example
+- README.md
+
+LOOP stages:
+
+1. Upload Loop
+- User uploads electricity usage CSV or selects sample data.
+- System validates file type and size.
+- System checks required columns.
+- System creates an energy session.
+- UI shows upload status and file metadata.
+
+CSV formats to support:
+- timestamp,kwh
+- date,kwh
+- date,time,kwh
+- month,kwh
+
+If the uploaded CSV is missing required data, show a helpful error and offer a sample CSV.
+
+2. Clean Loop
+- Backend cleans the data using Pandas.
+- Remove duplicate rows.
+- Handle missing values.
+- Normalize timestamp/date columns.
+- Convert kWh values to numeric.
+- Detect hourly, daily, or monthly data format.
+- Flag invalid rows.
+- Calculate data quality score.
+
+UI should show:
+- total rows
+- valid rows
+- ignored rows
+- detected date range
+- detected frequency
+- data quality score
+
+3. Analyze Loop
+- Backend analyzes usage patterns.
+- Calculate total kWh.
+- Calculate average daily usage.
+- Detect peak usage hour if hourly data exists.
+- Detect peak usage day.
+- Compare weekday vs weekend usage.
+- Detect unusual usage spikes.
+- Build monthly or daily trend data.
+
+UI should show:
+- total usage card
+- average daily usage card
+- peak usage card
+- usage trend chart
+- weekday vs weekend chart
+- spike/anomaly list
+
+4. Estimate Loop
+- Backend estimates cost and emissions.
+- User can enter tariff rate.
+- User can enter or select grid emission factor.
+- Provide default emission factor if user does not enter one.
+- Calculate estimated cost.
+- Calculate estimated CO2 emissions.
+- Calculate cost per day.
+- Calculate emissions per day.
+- Compare with previous session if available.
+
+Formula examples:
+estimated_cost = total_kwh * tariff_rate
+estimated_emissions_kg = total_kwh * emission_factor
+
+UI should show:
+- estimated bill cost
+- estimated CO2 emissions
+- cost trend
+- emissions trend
+- cost per day
+- emissions per day
+
+5. Recommend Loop
+- Backend generates energy-saving recommendations.
+- Use deterministic recommendation rules first.
+- Use MockAIProvider to generate a friendly summary.
+- Recommendations should be based on detected patterns.
+
+Examples:
+- If evening usage is high, suggest shifting appliance usage to off-peak hours.
+- If weekend usage is high, suggest reviewing weekend appliance behavior.
+- If spikes are detected, suggest checking high-load appliances.
+- If total usage is high, suggest setting a monthly reduction goal.
+
+Each recommendation must include:
+- recommendation_id
+- title
+- category
+- reason
+- estimated_savings
+- estimated_co2_reduction
+- difficulty
+- priority
+- status
+
+Recommendation categories:
+- peak_shift
+- appliance_efficiency
+- standby_reduction
+- behavior_change
+- tariff_optimization
+- monitoring
+
+6. Act Loop
+- User can mark recommendations as:
+  - planned
+  - in_progress
+  - completed
+  - dismissed
+- User can set a monthly kWh reduction goal.
+- User can add notes to actions.
+- UI should show action checklist and goal progress.
+
+7. Track Loop
+- System tracks progress across sessions.
+- For MVP, store history in frontend local state.
+- Structure code so database storage can be added later.
+- Compare current session against previous session.
+- Show:
+  - kWh change
+  - estimated cost change
+  - estimated emissions change
+  - completed actions
+  - goal progress
+
+8. Improve Loop
+- System generates a next-cycle improvement plan.
+- Compare completed actions with actual usage changes.
+- Suggest what to focus on next.
+- Mock AI provider should generate a simple next-month energy plan.
+
+Example:
+“Your evening peak remained high this month. Next cycle, focus on shifting laundry, charging, and cooking-related loads outside 7 PM to 10 PM.”
+
+Backend API requirements:
+Create these endpoints:
+- GET /health
+- GET /api/samples
+- POST /api/energy/upload
+- POST /api/energy/analyze
+- POST /api/recommendations/generate
+- POST /api/actions/update
+- POST /api/export/report
+- GET /api/energy/{session_id}
+
+Backend models:
+
+EnergySession:
+- session_id
+- file_name
+- uploaded_at
+- location
+- tariff_rate
+- emission_factor
+- building_type
+- data_quality_score
+- total_kwh
+- average_daily_kwh
+- estimated_cost
+- estimated_emissions_kg
+- peak_usage_hour
+- peak_usage_day
+- usage_frequency
+- loop_stage
+- recommendations
+- actions
+- loop_trace
+
+EnergyReading:
+- timestamp
+- date
+- kwh
+- estimated_cost
+- estimated_emissions_kg
+- source_row
+- quality_status
+
+UploadEnergyResponse:
+- session_id
+- file_name
+- file_size
+- detected_columns
+- total_rows
+- valid_rows
+- ignored_rows
+- data_quality_score
+- loop_trace
+
+AnalyzeEnergyResponse:
+- session_id
+- total_kwh
+- average_daily_kwh
+- peak_usage_hour
+- peak_usage_day
+- weekday_average
+- weekend_average
+- spikes
+- trend_data
+- estimated_cost
+- estimated_emissions_kg
+- loop_trace
+
+Recommendation:
+- recommendation_id
+- title
+- category
+- reason
+- estimated_savings
+- estimated_co2_reduction
+- difficulty
+- priority
+- status
+
+ActionUpdateRequest:
+- session_id
+- recommendation_id
+- status
+- notes
+
+LoopTrace:
+- upload_received
+- file_validated
+- data_cleaned
+- usage_analyzed
+- cost_estimated
+- carbon_estimated
+- recommendations_generated
+- actions_selected
+- progress_tracked
+- next_cycle_generated
+- final_status
+
+Loop engine requirements:
+Create backend module app/loop_engine.py.
+
+It should coordinate the workflow:
+- validate_upload_loop()
+- run_clean_loop()
+- run_analyze_loop()
+- run_estimate_loop()
+- run_recommend_loop()
+- run_act_loop()
+- run_track_loop()
+- run_improve_loop()
+- build_loop_trace()
+
+The loop engine should not directly depend on one specific AI model.
+Use a provider interface.
+
+AI provider requirements:
+Create AIProvider interface with:
+- summarize_energy_usage(analysis)
+- generate_recommendation_summary(recommendations)
+- generate_next_cycle_plan(session, previous_sessions)
+
+Create MockAIProvider first so the app works without API keys.
+
+Data processing requirements:
+Use deterministic analytics first.
+Do not rely only on AI for calculations.
+AI should explain insights and generate friendly summaries, not calculate core metrics.
+
+CSV sample data:
+Add realistic sample datasets:
+- household_hourly_usage.csv
+- small_office_daily_usage.csv
+- apartment_monthly_usage.csv
+
+Frontend UI requirements:
+Do not create a marketing landing page.
+The first screen must be the actual product dashboard/workflow.
+
+Design style:
+- ClimateTech SaaS dashboard
+- clean, modern, operational
+- light theme preferred
+- use green/blue accents carefully
+- avoid making the whole UI one-color green
+- readable charts
+- professional dashboard layout
+- responsive for laptop and desktop
+
+UI layout:
+- top navigation with product name, current loop stage, and export button
+- left sidebar with upload, sample datasets, and session history
+- main dashboard area with cards and charts
+- right panel for recommendations and action plan
+- bottom or secondary panel for data quality and loop trace
+
+Components to create:
+- AppShell
+- TopNav
+- Sidebar
+- UploadPanel
+- SampleDatasetPicker
+- LoopProgress
+- DataQualityPanel
+- UsageSummaryCards
+- UsageTrendChart
+- WeekdayWeekendChart
+- CostCarbonPanel
+- RecommendationPanel
+- ActionTracker
+- GoalTracker
+- SessionHistory
+- LoopTracePanel
+- ExportPanel
+- EmptyState
+- ErrorState
+
+Frontend state requirements:
+Model the product as a loop, not a one-time upload.
+
+Use state for:
+- current session
+- uploaded file metadata
+- cleaned data summary
+- usage analysis
+- cost and carbon estimates
+- recommendations
+- selected actions
+- monthly goal
+- session history
+- current loop stage
+- loading states
+- error states
+
+Engineering requirements:
+- Use clean reusable components.
+- Use TypeScript types matching backend models.
+- Keep API calls in a dedicated frontend API client.
+- Add loading states, empty states, error states, and retry states.
+- Add realistic sample CSV data.
+- Keep the UI responsive.
+- Avoid unnecessary features.
+- Keep MVP focused on energy analytics and improvement loop.
+- Include README with setup, architecture, loop design, API docs, sample CSV format, and roadmap.
+
+README must explain:
+- What LOOP Engineering means in this project.
+- The EcoPulse energy optimization loop.
+- Frontend/backend setup.
+- API endpoints.
+- Sample CSV formats.
+- Deterministic analytics.
+- Mock AI provider.
+- Future real AI provider support.
+- Future database storage.
+- Future smart meter integrations.
+- Why this project is useful in ClimateTech.
+
+Deliverables:
+- Working Next.js frontend
+- Working FastAPI backend
+- CSV upload and sample data flow
+- Energy usage analytics
+- Cost estimation
+- Carbon emissions estimation
+- Recommendation engine
+- Action tracker
+- Goal tracker
+- Session history in local state
+- Loop progress UI
+- Loop trace panel
+- Export monthly report feature
+- Clean README
+
+Build the MVP first.
+Focus on making the LOOP workflow clear, visible, practical, and impressive for product-based company interviews.

@@ -1,0 +1,14 @@
+Review the EcoPulse project like a senior ClimateTech product engineer.
+
+Improve the implementation in these areas:
+1. Make the LOOP workflow more visible and easier to understand.
+2. Improve CSV parsing and data quality handling.
+3. Improve deterministic usage analytics and spike detection.
+4. Improve recommendation quality and make each recommendation tied to actual usage patterns.
+5. Polish the dashboard UI so it feels like a real ClimateTech SaaS product.
+6. Improve API model consistency between frontend and backend.
+7. Improve error handling for upload, analysis, recommendation generation, and export.
+8. Improve README with architecture, LOOP design, sample CSV formats, and roadmap.
+
+Do not add unrelated features.
+Keep the MVP focused on energy usage optimization.
