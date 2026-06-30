@@ -1,0 +1,516 @@
+Create a full-stack project named orbitguard using a LOOP Engineering architecture.
+
+Product name:
+OrbitGuard - Space Debris & Satellite Collision Risk Dashboard
+
+Product concept:
+Build a SpaceTech dashboard that visualizes satellites and space debris, estimates close-approach collision risk, generates risk alerts, and helps users monitor orbital safety through an operational dashboard.
+
+This project should feel like a real SpaceTech monitoring product, not a generic space landing page.
+
+Core LOOP workflow:
+Ingest → Normalize → Propagate → Detect → Score → Alert → Review → Improve
+
+Each loop stage must be visible in the UI and represented in the backend architecture.
+
+Main user journey:
+1. User opens the OrbitGuard dashboard.
+2. User loads sample satellite/debris data or imports TLE data.
+3. System normalizes orbital records.
+4. System estimates simplified orbital positions.
+5. System detects possible close approaches.
+6. System calculates collision risk scores.
+7. System generates alerts and a risk timeline.
+8. User reviews object details and risk reports.
+9. System improves monitoring through filters, saved watchlists, and historical risk trends.
+
+Important scope rule:
+Build an MVP with simplified orbital calculations first.
+Do not claim high-precision orbital prediction.
+Clearly label results as simulated or educational estimates unless using a validated orbital propagation library.
+
+Frontend tech stack:
+- Next.js with TypeScript
+- Tailwind CSS
+- Three.js or CesiumJS for 3D Earth/orbit visualization
+- Recharts for risk charts and timelines
+- Clean mission-control style dashboard UI
+
+Backend tech stack:
+- FastAPI with Python
+- Pandas for data processing
+- Pydantic models for validation
+- Optional orbital library if available: sgp4
+- Provider-based AI architecture
+- Mock AI provider first
+- Future support for Gemini, OpenAI, or Claude
+- CORS enabled
+- Environment variables using .env
+- FastAPI Swagger documentation
+
+Project structure:
+- frontend/
+  - app/
+  - components/
+  - components/layout/
+  - components/visualization/
+  - components/catalog/
+  - components/risk/
+  - components/alerts/
+  - components/watchlist/
+  - components/history/
+  - components/export/
+  - components/charts/
+  - lib/
+  - lib/api/
+  - lib/types/
+  - lib/samples/
+- backend/
+  - app/
+  - app/main.py
+  - app/models.py
+  - app/loop_engine.py
+  - app/routes/
+  - app/routes/objects.py
+  - app/routes/ingest.py
+  - app/routes/risk.py
+  - app/routes/alerts.py
+  - app/routes/export.py
+  - app/services/
+  - app/services/tle_parser_service.py
+  - app/services/catalog_normalization_service.py
+  - app/services/orbit_propagation_service.py
+  - app/services/close_approach_service.py
+  - app/services/risk_scoring_service.py
+  - app/services/alert_generation_service.py
+  - app/services/report_export_service.py
+  - app/providers/
+  - app/providers/ai_provider.py
+  - app/providers/mock_ai_provider.py
+  - requirements.txt
+  - .env.example
+- README.md
+
+LOOP stages:
+
+1. Ingest Loop
+- User loads sample satellite/debris catalog or imports TLE data.
+- System validates the dataset.
+- System creates an orbital monitoring session.
+- UI shows ingest status, object count, and dataset metadata.
+
+Supported MVP data sources:
+- bundled sample TLE dataset
+- uploaded TLE text file
+- uploaded CSV object catalog
+
+Sample CSV format:
+object_id,name,type,operator,country,altitude_km,inclination_deg,raan_deg,mean_motion,epoch
+25544,ISS,satellite,NASA/International,International,420,51.6,0,15.5,2026-06-28
+DEB001,Debris Fragment 001,debris,Unknown,Unknown,780,98.4,12,14.2,2026-06-28
+
+Object types:
+- satellite
+- debris
+- rocket_body
+- unknown
+
+2. Normalize Loop
+- Backend normalizes orbital records into a consistent object model.
+- Parse TLE lines if provided.
+- Clean missing or invalid fields.
+- Convert numeric values.
+- Tag object category.
+- Calculate data quality score.
+- Flag records that need review.
+
+UI should show:
+- total objects
+- valid objects
+- invalid objects
+- satellites count
+- debris count
+- rocket bodies count
+- data quality score
+
+3. Propagate Loop
+- Backend estimates simplified orbital positions.
+- If sgp4 is available, use it for TLE propagation.
+- If not, use simplified circular orbit approximation for MVP.
+- Generate object positions for a time window.
+- Time window examples:
+  - now
+  - next 1 hour
+  - next 6 hours
+  - next 24 hours
+- Store position samples for visualization and risk checks.
+
+Important:
+Label simplified calculations clearly as educational estimates.
+
+UI should show:
+- current estimated object positions
+- orbit paths
+- selected time window
+- propagation method used: sgp4 or simplified
+
+4. Detect Loop
+- Backend detects possible close approaches.
+- Compare object positions within the selected time window.
+- Calculate estimated distance between objects.
+- Flag pairs below configurable thresholds.
+
+Threshold examples:
+- high attention: under 5 km
+- medium attention: under 15 km
+- low attention: under 50 km
+
+UI should show:
+- close approach list
+- object pair
+- estimated closest distance
+- estimated time of closest approach
+- threshold level
+
+5. Score Loop
+- Backend calculates a collision risk score.
+- Risk score should combine:
+  - closest distance
+  - object type
+  - relative speed estimate if available
+  - data quality
+  - time to closest approach
+- Output risk levels:
+  - low
+  - medium
+  - high
+  - critical
+  - needs_review
+
+Risk score formula can be simplified for MVP but must be deterministic and explainable.
+
+UI should show:
+- risk score
+- risk level badge
+- reason for risk score
+- confidence/data quality indicator
+
+6. Alert Loop
+- Backend generates risk alerts.
+- Alerts should include:
+  - alert_id
+  - severity
+  - object_pair
+  - closest_distance_km
+  - time_to_closest_approach
+  - explanation
+  - recommended_review_action
+  - status
+
+Alert statuses:
+- new
+- acknowledged
+- monitoring
+- dismissed
+
+UI should show:
+- active alerts panel
+- severity filters
+- alert timeline
+- acknowledge/dismiss actions
+
+7. Review Loop
+- User can inspect object details, risk events, and alert history.
+- User can add objects to a watchlist.
+- User can filter by type, country, operator, altitude band, risk level, and time window.
+- User can export a risk report.
+
+UI should show:
+- object catalog table
+- object detail drawer
+- watchlist
+- risk event timeline
+- export report button
+
+8. Improve Loop
+- System helps improve future monitoring.
+- Track acknowledged alerts and watchlisted objects.
+- Show historical risk trend for the current session.
+- Mock AI provider generates an operations-style summary:
+  - highest-risk objects
+  - recurring risk zones
+  - recommended monitoring priorities
+  - data quality warnings
+
+Backend API requirements:
+Create these endpoints:
+- GET /health
+- GET /api/samples
+- POST /api/ingest/tle
+- POST /api/ingest/catalog
+- POST /api/risk/analyze
+- GET /api/objects/{object_id}
+- POST /api/alerts/{alert_id}/status
+- POST /api/watchlist
+- POST /api/export/report
+
+Backend models:
+
+OrbitalSession:
+- session_id
+- dataset_name
+- created_at
+- object_count
+- valid_object_count
+- invalid_object_count
+- data_quality_score
+- propagation_method
+- time_window
+- loop_stage
+- objects
+- close_approaches
+- alerts
+- watchlist
+- loop_trace
+
+OrbitalObject:
+- object_id
+- name
+- object_type
+- operator
+- country
+- altitude_km
+- inclination_deg
+- raan_deg
+- mean_motion
+- epoch
+- tle_line1 optional
+- tle_line2 optional
+- data_quality_status
+
+PositionSample:
+- object_id
+- timestamp
+- latitude
+- longitude
+- altitude_km
+- x
+- y
+- z
+- method
+
+CloseApproach:
+- approach_id
+- primary_object_id
+- secondary_object_id
+- primary_name
+- secondary_name
+- closest_distance_km
+- estimated_time
+- relative_speed_km_s optional
+- threshold_level
+- risk_score
+- risk_level
+- score_reason
+- confidence_score
+
+RiskAlert:
+- alert_id
+- severity
+- object_pair
+- closest_distance_km
+- time_to_closest_approach
+- explanation
+- recommended_review_action
+- status
+- created_at
+
+LoopTrace:
+- ingest_received
+- catalog_validated
+- records_normalized
+- positions_propagated
+- close_approaches_detected
+- risk_scored
+- alerts_generated
+- review_actions_recorded
+- improvement_summary_generated
+- final_status
+
+Loop engine requirements:
+Create backend module app/loop_engine.py.
+
+It should coordinate:
+- run_ingest_loop()
+- run_normalize_loop()
+- run_propagate_loop()
+- run_detect_loop()
+- run_score_loop()
+- run_alert_loop()
+- run_review_loop()
+- run_improve_loop()
+- build_loop_trace()
+
+The loop engine should not depend directly on one AI model or one propagation method.
+Use service/provider interfaces.
+
+AI provider requirements:
+Create AIProvider interface with:
+- summarize_risk_session(session)
+- explain_risk_event(close_approach)
+- generate_monitoring_priorities(alerts, watchlist)
+- summarize_data_quality_warnings(objects)
+
+Create MockAIProvider first so the project works without API keys.
+AI must explain and summarize. It must not be responsible for core risk calculations.
+
+Orbital calculation requirements:
+- Use deterministic calculations for risk scoring.
+- If sgp4 is installed, use it for TLE propagation.
+- If sgp4 is unavailable, fallback to simplified circular orbit simulation.
+- Clearly expose which method was used.
+- Do not pretend simplified results are precise.
+
+Risk scoring requirements:
+Create an explainable scoring service.
+
+Example scoring inputs:
+- closest_distance_km
+- object types
+- time_to_closest_approach
+- data_quality_score
+- relative_speed if available
+
+Example risk levels:
+- 0-24 low
+- 25-49 medium
+- 50-74 high
+- 75-100 critical
+- needs_review when data quality is low
+
+Sample datasets:
+Add realistic sample datasets:
+- active_satellites_sample.tle
+- debris_objects_sample.csv
+- mixed_orbital_catalog_sample.csv
+
+Frontend UI requirements:
+Do not create a marketing landing page.
+The first screen must be the actual OrbitGuard dashboard.
+
+Design style:
+- mission-control SpaceTech dashboard
+- dark interface is acceptable and fitting
+- use restrained colors: deep navy, black, cyan, amber, white
+- do not use purple-heavy gradients
+- no decorative space landing-page hero
+- professional operational dashboard
+- data-dense but readable
+
+UI layout:
+- top navigation with product name, active session, time window, and export button
+- left sidebar with dataset loader, filters, and watchlist
+- main center area with 3D Earth/orbit visualization
+- right panel with active risk alerts
+- bottom panel with risk timeline, close approaches, loop trace, and data quality
+- object detail drawer when selecting an object
+
+Visualization requirements:
+- 3D Earth or globe view using Three.js or CesiumJS
+- Show satellites and debris as distinguishable markers
+- Show orbit paths or simplified orbital arcs
+- Highlight selected object
+- Highlight risky object pairs
+- Provide fallback 2D chart/table if 3D rendering fails
+
+Charts:
+- risk events over time
+- risk level distribution
+- objects by type
+- altitude band distribution
+- data quality summary
+
+Components to create:
+- AppShell
+- TopNav
+- DatasetLoader
+- FilterSidebar
+- WatchlistPanel
+- OrbitGlobe
+- ObjectMarker
+- ObjectCatalogTable
+- ObjectDetailDrawer
+- RiskAlertPanel
+- CloseApproachTable
+- RiskTimeline
+- RiskScoreBadge
+- DataQualityPanel
+- LoopProgress
+- LoopTracePanel
+- ExportPanel
+- EmptyState
+- ErrorState
+
+Frontend state requirements:
+Model the product as a loop, not a static dashboard.
+
+Use state for:
+- current session
+- loaded dataset metadata
+- orbital objects
+- selected object
+- time window
+- propagation method
+- close approaches
+- risk alerts
+- alert statuses
+- watchlist
+- filters
+- loop stage
+- loading states
+- error states
+
+Engineering requirements:
+- Use clean reusable components.
+- Use TypeScript types matching backend models.
+- Keep API calls in a dedicated frontend API client.
+- Add loading states, empty states, error states, and retry states.
+- Add realistic sample orbital data.
+- Keep UI responsive for laptop and desktop.
+- Avoid unnecessary features.
+- Keep MVP focused on monitoring, risk scoring, alerts, and review workflow.
+- Include README with setup, architecture, LOOP design, API docs, sample data format, limitations, and roadmap.
+
+README must explain:
+- What LOOP Engineering means in OrbitGuard.
+- The orbital monitoring loop.
+- Frontend/backend setup.
+- API endpoints.
+- Sample TLE and CSV formats.
+- Simplified propagation limitations.
+- Optional sgp4 support.
+- Deterministic risk scoring.
+- Mock AI provider.
+- Future real AI provider support.
+- Future real satellite data integrations.
+- Future historical database storage.
+- Why this project is useful in SpaceTech.
+
+Deliverables:
+- Working Next.js frontend
+- Working FastAPI backend
+- Mission-control dashboard UI
+- Sample TLE/CSV data loading
+- Orbital object catalog
+- Simplified orbit visualization
+- Close approach detection
+- Explainable risk scoring
+- Risk alerts
+- Watchlist
+- Loop progress UI
+- Loop trace panel
+- Export risk report feature
+- Clean README
+
+Build the MVP first.
+Focus on making the LOOP workflow clear, visible, technically credible, and impressive for product-based company interviews.

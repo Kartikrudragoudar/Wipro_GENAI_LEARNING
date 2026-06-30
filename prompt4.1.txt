@@ -1,0 +1,15 @@
+Review the OrbitGuard project like a senior SpaceTech product engineer.
+
+Improve the implementation in these areas:
+1. Make the LOOP workflow more visible and operational.
+2. Improve dataset validation and TLE/CSV parsing.
+3. Improve fallback behavior between sgp4 and simplified propagation.
+4. Improve deterministic close-approach detection and risk scoring.
+5. Polish the mission-control dashboard UI.
+6. Improve 3D globe usability and fallback table/chart views.
+7. Improve API model consistency between frontend and backend.
+8. Improve error handling for ingest, propagation, risk analysis, alerts, and export.
+9. Improve README with architecture, LOOP design, sample formats, scientific limitations, and roadmap.
+
+Do not add unrelated features.
+Keep the MVP focused on orbital monitoring and collision-risk review.

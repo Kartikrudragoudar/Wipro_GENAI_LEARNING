@@ -6,9 +6,6 @@ langchain
 langgraph
 anthropic
 sentence-transformers
-<<<<<<< HEAD
-huggingface
-=======
 huggingface
 python-dotenv
 flask
@@ -32,3 +29,5 @@ lxml
 redis
 pydantic
 ipykernel
+streamlit
+torchvision
