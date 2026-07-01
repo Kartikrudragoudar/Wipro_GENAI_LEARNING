@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0d1117;
+  --panel: #161b22;
+  --panel-2: #0f1720;
+  --panel-3: #1f2630;
+  --line: #30363d;
+  --text: #d6deeb;
+  --muted: #8b949e;
+  --accent: #4cc9f0;
+  --accent-2: #9ece6a;
+  --warn: #f6c177;
+  --danger: #ff7b72;
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --panel: #f6f8fa;
+  --panel-2: #ffffff;
+  --panel-3: #eaeef2;
+  --line: #d0d7de;
+  --text: #1f2328;
+  --muted: #656d76;
+  --accent: #0969da;
+  --accent-2: #1a7f37;
+  --warn: #9a6700;
+  --danger: #cf222e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Aptos", "Segoe UI", sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.workspace-grid {
+  display: grid;
+  grid-template-columns: 52px minmax(230px, 280px) minmax(420px, 1fr) minmax(310px, 390px);
+  grid-template-rows: 1fr 28px;
+  height: 100vh;
+  min-width: 1024px;
+  overflow: hidden;
+}
+
+.activity-bar {
+  grid-row: 1 / 3;
+  background: #0b1017;
+  border-right: 1px solid var(--line);
+}
+
+[data-theme="light"] .activity-bar {
+  background: #eaeef2;
+}
+
+.explorer-sidebar,
+.assistant-panel,
+.bottom-panel,
+.editor-shell {
+  border-color: var(--line);
+}
+
+.status-bar {
+  grid-column: 2 / 5;
+  background: #0f4c75;
+}
+
+[data-theme="light"] .status-bar {
+  background: #0969da;
+}
+
+.code-textarea {
+  background: #0b1017;
+  color: var(--text);
+  border: 1px solid var(--line);
+  outline: none;
+}
+
+[data-theme="light"] .code-textarea {
+  background: #ffffff;
+}
+
+.thin-scrollbar {
+  scrollbar-color: #3a4654 transparent;
+  scrollbar-width: thin;
+}
+
+@media (max-width: 1180px) {
+  .workspace-grid {
+    grid-template-columns: 48px 230px minmax(420px, 1fr);
+  }
+
+  .assistant-panel {
+    display: none;
+  }
+
+  .status-bar {
+    grid-column: 2 / 4;
+  }
+}
