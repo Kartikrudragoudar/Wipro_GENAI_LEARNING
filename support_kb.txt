@@ -1,0 +1,32 @@
+### KB-BILL-001 | Duplicate Charges and Refunds | billing
+Duplicate billing: If a customer sees two charges for the same invoice or subscription period, verify the transaction IDs, invoice IDs, billing dates, and payment method. If the duplicate charge is confirmed, issue a refund within 5 to 7 business days and notify the customer by email.
+
+### KB-BILL-002 | Failed Payment Troubleshooting | billing
+Failed payment: Ask the customer to confirm card expiry, billing address, available balance, and whether their bank blocked the transaction. Customers can update payment details from Settings > Billing > Payment Methods.
+
+### KB-BILL-003 | Subscription Cancellation | billing
+Subscription cancellation: Customers can cancel from Settings > Billing > Plan. Access remains active until the end of the current billing period. Refund eligibility depends on the billing policy and subscription terms.
+
+### KB-ACC-001 | Unable to Sign In | account_access
+Login issues: If the customer cannot sign in, ask them to reset their password. If they do not receive the reset email, ask them to check spam folders and confirm the email address on the account.
+
+### KB-ACC-002 | Account Locked After Failed Attempts | account_access
+Account lockout: Accounts are temporarily locked after repeated failed login attempts. The customer should wait 30 minutes or use the password reset flow. Escalate if the customer suspects unauthorized access.
+
+### KB-ACC-003 | Password Reset Process | account_access
+Password reset: Customers can reset their password using the Forgot Password link on the login page. The reset link expires after 20 minutes. If the link expires, the customer should request a new one.
+
+### KB-TECH-001 | Mobile App Crash Troubleshooting | technical_issue
+Mobile app crash: Ask the customer for device type, operating system, app version, time of crash, and screenshots if available. Recommend updating the app and clearing cache before escalating to engineering.
+
+### KB-TECH-002 | API Error Investigation | technical_issue
+API errors: For 500-level errors, collect request ID, endpoint, timestamp, payload sample, and account ID. Check the status page for active incidents before escalating. If checkout or production traffic is affected, treat the issue as high priority or urgent depending on impact.
+
+### KB-TECH-003 | Dashboard Performance Troubleshooting | technical_issue
+Slow dashboard loading: Ask the customer to confirm browser version, network conditions, affected dashboard name, and approximate load time. Recommend clearing browser cache and trying an incognito window.
+
+### KB-SHIP-001 | Delayed Shipment Process | shipping
+Delayed shipment: Check the carrier tracking number and estimated delivery date. If tracking has not updated for more than 72 hours, open a carrier investigation and keep the customer updated.
+
+### KB-SHIP-002 | Lost Shipment Investigation | shipping
+Lost shipment: If the carrier marks a package as delivered but the customer cannot find it, ask them to check nearby areas, household members, and building reception. If still missing after 24 hours, start a lost package claim.
